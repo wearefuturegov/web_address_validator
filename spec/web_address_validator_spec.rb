@@ -1,8 +1,13 @@
 require 'spec_helper'
 
-# TODO: test for specific error messages
+# TODO:
+# - test for specific error messages
+# - test more known hosts; fqdns, second level domains etc.
 
 describe WebAddressValidator do
+
+  let(:known_host) { "google.com" }
+  let(:unknown_host) { "www.unknown-host-for-web-address-validator-spec.com" }
 
   context "bad uri" do
     subject { TestModel.new("%") }
@@ -15,8 +20,6 @@ describe WebAddressValidator do
   end
 
   context "known host" do
-
-    let(:known_host) { "google.com" }
 
     context "http protocol" do
       subject { TestModel.new("http://#{known_host}") }
@@ -55,4 +58,8 @@ describe WebAddressValidator do
     it { should_not be_valid }
   end
 
+  context "unknown host name" do
+    subject { TestModel.new(unknown_host) }
+    it { should_not be_valid }
+  end
 end
