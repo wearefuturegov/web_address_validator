@@ -6,6 +6,8 @@ Gem::Specification.new do |s|
   s.files = `git ls-files`.split("\n")
   s.test_files = `git ls-files -- {spec}/*`.split("\n")
   s.homepage = "http://github.com/thickpaddy/web_address_validator"
+  s.license  = "MIT"
+
   s.add_dependency("activemodel")
   s.add_development_dependency("rspec")
 end
