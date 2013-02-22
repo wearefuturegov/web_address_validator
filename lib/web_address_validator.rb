@@ -12,6 +12,8 @@ class WebAddressValidator < ActiveModel::EachValidator
       record.errors.add(attr, "specifies unsupported protocol, '#{uri.scheme}'")
     elsif uri.host.nil?
       record.errors.add(attr, "is missing host name (e.g. www.google.com)")
+    elsif !uri.host.match(/\.[a-zA-Z]{2,}$/)
+      record.errors.add(attr, "is missing top level domain name (e.g. .com)")
     end
   rescue URI::InvalidURIError
     record.errors.add(attr, "is invalid")

@@ -50,4 +50,9 @@ describe WebAddressValidator do
 
   end
 
+  context "missing tld" do
+    subject { TestModel.new("http://foo") }
+    it { should_not be_valid }
+  end
+
 end
