@@ -2,14 +2,14 @@ require 'rspec'
 require 'active_model'
 require_relative '../lib/web_address_validator'
 
-class TestModel
+class ValidatableModel
   include ActiveModel::Validations
-
-  attr_accessor :url
-
-  validates :url, :web_address => true
-
-  def initialize(url)
-    @url = url
+  attr_accessor :value
+  def initialize(value)
+    @value = value
   end
+end
+
+class TestModel < ValidatableModel
+  validates :value, :web_address => true
 end

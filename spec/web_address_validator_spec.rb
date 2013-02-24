@@ -58,8 +58,22 @@ describe WebAddressValidator do
     it { should_not be_valid }
   end
 
-  context "unknown host name" do
-    subject { TestModel.new(unknown_host) }
-    it { should_not be_valid }
+  context "unknown host" do
+
+    context "dns resolution enabled" do
+      subject { TestModel.new("http://#{unknown_host}") }
+      it { should_not be_valid }
+    end
+
+    context "dns resolution disabled" do
+      subject {
+        Class.new(ValidatableModel) do
+          validates :value, :web_address => { :resolv => false }
+        end.new("http://#{unknown_host}")
+      }
+      it { should be_valid }
+    end
+
   end
+
 end

@@ -4,10 +4,15 @@ require 'resolv'
 # TODO:
 # - locale file for error messages
 # - short timeout for dns resolution
-# - configuration option for dns resolution
-# - decide how to handle no route to host exceptions
+# - decide how to handle errors due to unreachable name server
+# - allow default options to be configured in initializer
 
 class WebAddressValidator < ActiveModel::EachValidator
+
+  def initialize(options)
+    options.reverse_merge!(:resolv => true)
+    super(options)
+  end
 
   def validate_each(record, attr, value)
     uri = URI.parse(value)
@@ -19,7 +24,7 @@ class WebAddressValidator < ActiveModel::EachValidator
       record.errors.add(attr, "is missing host name (e.g. www.google.com)")
     elsif !uri.host.match(/\.[a-zA-Z]{2,}$/)
       record.errors.add(attr, "is missing top level domain name (e.g. .com)")
-    else
+    elsif options[:resolv]
       begin
         Resolv.getaddress(uri.host)
       rescue Resolv::ResolvError
