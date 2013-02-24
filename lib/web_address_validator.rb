@@ -14,25 +14,31 @@ class WebAddressValidator < ActiveModel::EachValidator
     super(options)
   end
 
-  def validate_each(record, attr, value)
+  def validate_each(record, attribute, value)
     uri = URI.parse(value)
-    if uri.scheme.nil?
-      record.errors.add(attr, "is missing protocol (e.g. http://)")
-    elsif uri.scheme != "http" && uri.scheme != "https"
-      record.errors.add(attr, "contains invalid protocol, '#{uri.scheme}'")
-    elsif uri.host.nil?
-      record.errors.add(attr, "is missing host name (e.g. www.google.com)")
-    elsif !uri.host.match(/\.[a-zA-Z]{2,}$/)
-      record.errors.add(attr, "is missing top level domain name (e.g. .com)")
-    elsif options[:resolv]
-      begin
-        Resolv::DNS.new.getaddress(uri.host)
-      rescue Resolv::ResolvError
-        record.errors.add(attr, "does not seem to exist (#{uri.host} not found)")
+    error_msg = begin
+      if uri.scheme.nil?
+        "is missing protocol (e.g. http://)"
+      elsif uri.scheme != "http" && uri.scheme != "https"
+        "contains invalid protocol, '#{uri.scheme}'"
+      elsif uri.host.nil?
+        "is missing host name (e.g. www.google.com)"
+      elsif !uri.host.match(/\.[a-zA-Z]{2,}$/)
+        "is missing top level domain name (e.g. .com)"
+      elsif options[:resolv] && !getaddress(uri.host)
+        "does not seem to exist (#{uri.host} not found)"
       end
     end
+    record.errors.add(attribute, error_msg) if error_msg.present?
   rescue URI::InvalidURIError
-    record.errors.add(attr, "is invalid")
+    record.errors.add(attribute, "is invalid")
+  end
+
+  private
+  def getaddress(host)
+    Resolv::DNS.new.getaddress(host)
+  rescue Resolv::ResolvError
+    nil
   end
 
 end

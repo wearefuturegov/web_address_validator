@@ -66,11 +66,10 @@ describe WebAddressValidator do
     end
 
     context "dns resolution disabled" do
-      subject {
-        Class.new(ValidatableModel) do
-          validates :value, :web_address => { :resolv => false }
-        end.new("http://#{unknown_host}")
-      }
+      test_model = Class.new(ValidatableModel) do
+        validates :value, :web_address => { :resolv => false }
+      end
+      subject { test_model.new("http://#{unknown_host}") }
       it { should be_valid }
     end
 
