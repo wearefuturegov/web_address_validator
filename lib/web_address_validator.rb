@@ -26,7 +26,7 @@ class WebAddressValidator < ActiveModel::EachValidator
       record.errors.add(attr, "is missing top level domain name (e.g. .com)")
     elsif options[:resolv]
       begin
-        Resolv.getaddress(uri.host)
+        Resolv::DNS.new.getaddress(uri.host)
       rescue Resolv::ResolvError
         record.errors.add(attr, "does not seem to exist (#{uri.host} not found)")
       end
