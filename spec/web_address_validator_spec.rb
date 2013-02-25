@@ -6,6 +6,13 @@ require 'spec_helper'
 
 describe WebAddressValidator do
 
+  describe "default options" do
+    it "should allow defaults to be set at class level" do
+      WebAddressValidator.default_options = {:foo => :bar}
+      WebAddressValidator.new(:attributes => {}).options.should include(:foo => :bar)
+    end
+  end
+
   let(:known_host) { "google.com" }
   let(:unknown_host) { "www.unknown-host-for-web-address-validator-spec.com" }
 

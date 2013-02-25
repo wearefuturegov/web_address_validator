@@ -5,12 +5,14 @@ require 'resolv'
 # - locale file for error messages
 # - short timeout for dns resolution
 # - decide how to handle errors due to unreachable name server
-# - allow default options to be configured in initializer
 
 class WebAddressValidator < ActiveModel::EachValidator
 
+  @default_options = { :resolv => true }
+  class << self; attr_accessor :default_options; end
+
   def initialize(options)
-    options.reverse_merge!(:resolv => true)
+    options.reverse_merge!(self.class.default_options)
     super(options)
   end
 
