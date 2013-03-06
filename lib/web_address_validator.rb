@@ -1,10 +1,7 @@
 require 'uri'
 require 'resolv'
 
-# TODO:
-# - locale file for error messages
-# - short timeout for dns resolution
-# - decide how to handle errors due to unreachable name server
+# TODO: locale file for error messages
 
 class WebAddressValidator < ActiveModel::EachValidator
 
@@ -38,7 +35,9 @@ class WebAddressValidator < ActiveModel::EachValidator
 
   private
   def getaddress(host)
-    Resolv::DNS.new.getaddress(host)
+    Timeout.timeout(5) do
+      Resolv::DNS.new.getaddress(host)
+    end
   rescue Resolv::ResolvError
     nil
   end
