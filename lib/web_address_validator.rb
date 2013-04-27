@@ -5,7 +5,7 @@ require 'resolv'
 
 class WebAddressValidator < ActiveModel::EachValidator
 
-  @default_options = { :resolv => true }
+  @default_options = { :resolv => :dirty }
   class << self; attr_accessor :default_options; end
 
   def initialize(options)
@@ -24,8 +24,12 @@ class WebAddressValidator < ActiveModel::EachValidator
         "is missing host name (e.g. www.google.com)"
       elsif !uri.host.match(/\.[a-zA-Z]{2,}$/)
         "is missing top level domain name (e.g. .com)"
-      elsif options[:resolv] && !getaddress(uri.host)
-        "does not seem to exist (#{uri.host} not found)"
+      elsif options[:resolv] == true or
+        options[:resolv] == :dirty && !record.respond_to?(:changed?) or
+        options[:resolv] == :dirty && record.respond_to?(:changed?) && record.changed?
+        if !getaddress(uri.host)
+          "does not seem to exist (#{uri.host} not found)"
+        end
       end
     end
     record.errors.add(attribute, error_msg) if error_msg.present?
