@@ -25,8 +25,7 @@ class WebAddressValidator < ActiveModel::EachValidator
       elsif !uri.host.match(/\.[a-zA-Z]{2,}$/)
         "is missing top level domain name (e.g. .com)"
       elsif options[:resolv] == true or
-        options[:resolv] == :dirty && !record.respond_to?(:changed?) or
-        options[:resolv] == :dirty && record.respond_to?(:changed?) && record.changed?
+        options[:resolv] == :dirty && is_dirty(record)
         if !getaddress(uri.host)
           "does not seem to exist (#{uri.host} not found)"
         end
@@ -44,6 +43,14 @@ class WebAddressValidator < ActiveModel::EachValidator
     end
   rescue Resolv::ResolvError
     nil
+  end
+
+  def is_dirty(record)
+    if record.respond_to?(:changed?)
+      record.changed?
+    else
+      false
+    end
   end
 
 end
