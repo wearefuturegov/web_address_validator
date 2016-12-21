@@ -1,6 +1,6 @@
 # web_address_validator
 
-https://github.com/thickpaddy/web_address_validator
+https://github.com/mmrwoods/web_address_validator
 
 ## Description
 
@@ -15,7 +15,7 @@ enabled for dirty records by default.
 
 Add to `Gemfile` and bundle install:
 
-    $ echo "gem 'web_address_validator', :git => 'git://github.com/thickpaddy/web_address_validator.git'" >> Gemfile
+    $ echo "gem 'web_address_validator', :git => 'git://github.com/wearefuturegov/web_address_validator.git'" >> Gemfile
     $ bundle install
 
 ## Usage

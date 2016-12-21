@@ -27,7 +27,7 @@ class WebAddressValidator < ActiveModel::EachValidator
       elsif options[:resolv] == true or
         options[:resolv] == :dirty && is_dirty(record)
         if !getaddress(uri.host)
-          "does not seem to exist (#{uri.host} not found)"
+          "does not seem to exist (#{uri.host} not found or timed out)"
         end
       end
     end
@@ -42,7 +42,7 @@ class WebAddressValidator < ActiveModel::EachValidator
       Resolv::DNS.new.getaddress(host)
     end
   rescue Resolv::ResolvError
-    nil
+  rescue Timeout::Error
   end
 
   def is_dirty(record)
